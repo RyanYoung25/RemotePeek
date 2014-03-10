@@ -30,6 +30,7 @@ char* getNetwork()
 char* getKernelName()
 {
     //Get the kernel name and info from uname -a
+    sleep(.25);
     int pipes[2];
     static char test[5000];
     int pid;
@@ -59,6 +60,7 @@ char* getKernelName()
         wait();
         close(pipes[1]);
         read(pipes[0], test, sizeof(test));
+        close(pipes[0]);
         return test;
     }
 }
@@ -66,6 +68,7 @@ char* getKernelName()
 char* getDate()
 {
     //Get the kernel name and info from uname -a
+    sleep(.25);
     int pipes[2];
     static char test[5000];
     int pid;
@@ -95,6 +98,7 @@ char* getDate()
         wait();
         close(pipes[1]);
         read(pipes[0], test, sizeof(test));
+        close(pipes[0]);
         return test;
     }
 }
@@ -111,9 +115,12 @@ char* getLoggedInUsers()
 
 /*int main(int argc, char const *argv[])
 {
-    
-    char* test;
-    test = getKernelName();
-    printf("%s\n", test);
-    return 0;
+    while(1){
+        char* test1;
+        test1 = getKernelName();
+        char* test2;
+        test2 = getDate();
+        printf("%s\n", test1);
+        printf("%s\n", test2);
+    }
 }*/
