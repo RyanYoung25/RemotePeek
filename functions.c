@@ -3,34 +3,117 @@
  * Each function will return 0 on success and -1 on error and take a string, res, to 
  * return the result in. 
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+char* getTop();
+char* getNetwork();
+char* getKernelName();
+char* getDate();
+char* getDiskSpace();
+char* getLoggedInUsers();
+/*End prototypes*/
 
 
- void getTop(char** res)
- {
-    //Get the header from the top command and put it in res
- }
+char* getTop()
+{
+//Get the header froml the top command and put it in res
+}
 
- void getNetwork(char** res)
- {
-    //Get the network info from the command ss -s 
- }
+char* getNetwork()
+{
+//Get the network info from the command ss -s 
+}
 
- void getKernelName(char** res)
- {
+char* getKernelName()
+{
     //Get the kernel name and info from uname -a
- }
+    int pipes[2];
+    static char test[5000];
+    int pid;
+    int status;
 
- void getDate(char** res)
- {
-    //Get the Date from the command echo `date`
- }
+    if(pipe(pipes) == -1)
+    {
+        printf("%s\n", "Pipe error");
+        fprintf(stderr, "Error creating pipe");
+    }
 
- void getDiskSpace(char** res)
- {
-    //Get disk space used from command df
- }
+    pid = fork();
 
- void getLoggedInUsers(char** res)
- {
-    //Get all of the logged in users using command who -a
- }
+    if( pid == -1)
+    {
+        printf("%s\n", "Fork error");
+        fprintf(stderr, "Error forking");
+    }
+    if(pid == 0)
+    {
+        dup2(pipes[1], STDOUT_FILENO);
+        close(pipes[0]);
+        execlp("uname", "uname", "-a", (char*)0);
+    }
+    else
+    {
+        wait();
+        close(pipes[1]);
+        read(pipes[0], test, sizeof(test));
+        return test;
+    }
+}
+
+char* getDate()
+{
+    //Get the kernel name and info from uname -a
+    int pipes[2];
+    static char test[5000];
+    int pid;
+    int status;
+
+    if(pipe(pipes) == -1)
+    {
+        printf("%s\n", "Pipe error");
+        fprintf(stderr, "Error creating pipe");
+    }
+
+    pid = fork();
+
+    if( pid == -1)
+    {
+        printf("%s\n", "Fork error");
+        fprintf(stderr, "Error forking");
+    }
+    if(pid == 0)
+    {
+        dup2(pipes[1], STDOUT_FILENO);
+        close(pipes[0]);
+        execlp("date", "date", (char*)0);
+    }
+    else
+    {
+        wait();
+        close(pipes[1]);
+        read(pipes[0], test, sizeof(test));
+        return test;
+    }
+}
+
+char* getDiskSpace()
+{
+//Get disk space used from command df
+}
+
+char* getLoggedInUsers()
+{
+//Get all of the logged in users using command who -a
+}
+
+/*int main(int argc, char const *argv[])
+{
+    
+    char* test;
+    test = getKernelName();
+    printf("%s\n", test);
+    return 0;
+}*/

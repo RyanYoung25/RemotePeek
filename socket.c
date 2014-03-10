@@ -9,8 +9,12 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <signal.h>
+#include "functions.c"
+/*End includes*/
 
 int sockfd; // The socket pointer
+/*End globals*/
+
 void cleanExit() 
 {
     // close sockfd
@@ -61,8 +65,16 @@ int main(int argc, char const *argv[])
             return EXIT_FAILURE;
         }
 
-        //Do some stuff here. 
-        write(newsockfd, "Hello World", strlen("Hello World"),0);
+        //Do some stuff here.  
+        char* dateData;
+        char* kernelData;
+        kernelData = getKernelName();
+        dateData = getDate();
+
+
+        write(newsockfd, "Hello World\n", strlen("Hello World\n"));
+        write(newsockfd, kernelData, strlen(kernelData));
+        write(newsockfd, dateData, strlen(dateData));
 
         // close newsockfd
         close(newsockfd);
