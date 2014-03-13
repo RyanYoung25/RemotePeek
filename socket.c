@@ -30,6 +30,8 @@ int main(int argc, char const *argv[])
     int port = 8000; // The port you listen on
     int clilen; // The length of the client's address
     int yes = 1;
+    int n;
+    char buffer[2048];
     struct sockaddr_in serv_addr; // The server's address
     struct sockaddr_in cli_addr; // The client's address
     clilen = sizeof(cli_addr);
@@ -65,17 +67,29 @@ int main(int argc, char const *argv[])
             return EXIT_FAILURE;
         }
 
-        //Do some stuff here.  
-        char* dateData;
-        char* kernelData;
-        kernelData = getKernelName();
-        dateData = getDate();
-
-
-        write(newsockfd, "Hello World\n", strlen("Hello World\n"));
-        write(newsockfd, kernelData, strlen(kernelData));
-        write(newsockfd, dateData, strlen(dateData));
-
+        if((n = read(newsockfd, buffer, 2048)) > 0){
+            //Do some stuff here.  
+            char* dateData;
+            char* kernelData;
+            char* networkData;
+            char* diskSpace;
+            char* loggedIn;
+            kernelData = getKernelName();
+            dateData = getDate();
+            networkData = getNetwork();
+            diskSpace = getDiskSpace();
+            loggedIn = getLoggedInUsers();
+            write(newsockfd, "uname -a: \n", strlen("uname -a: \n"));
+            write(newsockfd, kernelData, strlen(kernelData));
+            write(newsockfd, "date: \n", strlen("date: \n"));
+            write(newsockfd, dateData, strlen(dateData));
+            write(newsockfd, "ss -s: \n", strlen("ss -s: \n"));
+            write(newsockfd, networkData, strlen(networkData));
+            write(newsockfd, "df: \n", strlen("df: \n"));
+            write(newsockfd, diskSpace, strlen(diskSpace));
+            write(newsockfd, "who -a: \n", strlen("who -a: \n"));
+            write(newsockfd, loggedIn, strlen(loggedIn));
+        }
         // close newsockfd
         close(newsockfd);
     }
