@@ -74,7 +74,10 @@ int main(int argc, char const *argv[])
             char* networkData;
             char* diskSpace;
             char* loggedIn;
-			char* sysStatus;
+			char* sysStatus;															
+			char* breaker = "\n--------------------------------------------------------------------\n";
+			int breakerLen = strlen(breaker);
+
             kernelData = getKernelName();
             dateData = getDate();
             networkData = getNetwork();
@@ -84,15 +87,25 @@ int main(int argc, char const *argv[])
 
             write(newsockfd, "uname -a: \n", strlen("uname -a: \n"));
             write(newsockfd, kernelData, strlen(kernelData));
+			write(newsockfd, breaker, breakerLen);
+
             write(newsockfd, "date: \n", strlen("date: \n"));
             write(newsockfd, dateData, strlen(dateData));
+			write(newsockfd, breaker, breakerLen);
+
             write(newsockfd, "ss -s: \n", strlen("ss -s: \n"));
             write(newsockfd, networkData, strlen(networkData));
+			write(newsockfd, breaker, breakerLen);
+
             write(newsockfd, "df: \n", strlen("df: \n"));
             write(newsockfd, diskSpace, strlen(diskSpace));
-            write(newsockfd, "\nwho -a: \n", strlen("\nwho -a: \n"));
+			write(newsockfd, breaker, breakerLen);
+            
+			write(newsockfd, "who -a: \n", strlen("who -a: \n"));
             write(newsockfd, loggedIn, strlen(loggedIn));
-			write(newsockfd, "\ntop -b: \n", strlen("\ntop -b: \n"));
+			write(newsockfd, breaker, breakerLen);
+
+			write(newsockfd, "top -b: \n", strlen("top -b: \n"));
 			write(newsockfd, sysStatus, strlen(sysStatus));
         }
         // close newsockfd
