@@ -20,6 +20,72 @@ char* getLoggedInUsers();
 char* getTop()
 {
 //Get the header froml the top command and put it in res
+    sleep(.25);
+    int pipes[2];
+	int pipes2[2];
+    static char test[5000];
+    int pid;
+	int pid2;
+    int status;
+
+    if(pipe(pipes) == -1)
+    {
+        printf("%s\n", "Pipe error");
+        fprintf(stderr, "Error creating pipe");
+    }
+
+	pid = fork();
+
+    if(pid == -1)
+    {
+        printf("%s\n", "Fork error");
+        fprintf(stderr, "Error forking");
+    }
+    else if (pid > 0)
+    {
+        wait(pid);
+        close(pipes[1]);
+        read(pipes[0], test, sizeof(test));
+        close(pipes[0]);
+        return test;
+    }
+    else if(pid == 0)
+    {
+		if(pipe(pipes2) == -1)
+		{
+		    printf("%s\n", "Pipe error");
+		    fprintf(stderr, "Error creating pipe");
+		}
+
+		pid2 = fork();
+
+		if (pid2 == -1)
+		{
+		    printf("%s\n", "Fork error");
+		    fprintf(stderr, "Error forking");
+		}
+		else if (pid2 > 0)
+		{
+			wait(pid2);
+
+			close(pipes2[1]);
+		    dup2(pipes2[0], 0);
+			close(pipes2[0]);
+
+		    close(pipes[0]);
+			dup2(pipes[1], STDOUT_FILENO);
+			close(pipes[1]);
+
+			execlp("head", "head", "-5", (char*)0);
+		}
+		else if (pid2 == 0)
+		{
+			close(pipes2[0]);
+			dup2(pipes2[1], STDOUT_FILENO);
+			close(pipes2[1]);
+			execlp("top", "top", "-n 1", "-b", (char*)0);
+		}
+    }
 }
 
 char* getNetwork()
